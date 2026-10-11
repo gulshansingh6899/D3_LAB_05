@@ -1,0 +1,13 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>D3.js Lab 5 — Sankey Diagram</title><script src="https://d3js.org/d3.v7.min.js"></script><script src="https://cdn.jsdelivr.net/npm/d3-sankey@0.12.3/dist/d3-sankey.min.js"></script><style>body{font-family:system-ui,sans-serif;margin:0;background:#f7f8fb;color:#172033}header{padding:1.25rem 5vw;background:#172033;color:white}nav a{color:#b9dcff;margin-right:1rem}main{max-width:1100px;margin:1.5rem auto;padding:0 1rem}.panel{background:white;border:1px solid #dbe2ea;border-radius:12px;padding:1rem}svg{width:100%;height:580px}.node rect{fill:#4f78a8;stroke:#fff}.node text{font-size:12px;fill:#172033}.link{fill:none;stroke-opacity:.35}</style></head>
+<body><header><h1>D3.js Lab 5 — Sankey Diagram</h1><p>Student: GULSHAN SINGH · Registration No.: 24SSDS415015</p><nav><a href="index.html">Force graph</a><a href="sankey.html">Sankey diagram</a><a href="treemap.html">Treemap</a></nav></header><main><section class="panel"><h2>Resource flow</h2><p>Link width represents the relative size of each flow.</p><svg id="chart" role="img" aria-label="Sankey flow diagram"></svg></section></main>
+<script>
+const svg=d3.select("#chart"),w=svg.node().clientWidth,h=580;svg.attr("viewBox",[0,0,w,h]);
+const data={nodes:[{name:"Sources"},{name:"Cleaning"},{name:"Analysis"},{name:"Dashboard"},{name:"Reports"},{name:"Users"}],links:[{source:0,target:1,value:8},{source:1,target:2,value:7},{source:2,target:3,value:4},{source:2,target:4,value:3},{source:3,target:5,value:4},{source:4,target:5,value:3}]};
+const sankey=d3.sankey().nodeId(d=>d.index).nodeWidth(22).nodePadding(24).extent([[12,12],[w-130,h-12]]);
+const graph=sankey({nodes:data.nodes.map(d=>({...d})),links:data.links.map(d=>({...d}))});
+svg.append("g").selectAll("path").data(graph.links).join("path").attr("class","link").attr("d",d3.sankeyLinkHorizontal()).attr("stroke",d=>d3.schemeTableau10[d.source.index%10]).attr("stroke-width",d=>Math.max(1,d.width)).append("title").text(d=>`${d.source.name} → ${d.target.name}: ${d.value}`);
+const node=svg.append("g").selectAll("g").data(graph.nodes).join("g").attr("class","node");
+node.append("rect").attr("x",d=>d.x0).attr("y",d=>d.y0).attr("height",d=>Math.max(1,d.y1-d.y0)).attr("width",d=>d.x1-d.x0).append("title").text(d=>`${d.name}: ${d.value}`);
+node.append("text").attr("x",d=>d.x1+6).attr("y",d=>(d.y0+d.y1)/2).attr("dy","0.35em").text(d=>d.name);
+</script></body></html>
